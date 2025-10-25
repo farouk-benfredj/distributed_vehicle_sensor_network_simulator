@@ -13,6 +13,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install gcc-11 / g++-11 and CMake
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends build-essential gcc-11 g++-11 cmake
+        # Make /usr/bin/gcc and /usr/bin/g++ point to the installed 11 toolchain
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 || true
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100 || true
+        gcc --version
+        g++ --version
     - name: Build with CMake
       run: |
         cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
