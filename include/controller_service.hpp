@@ -1,19 +1,20 @@
+#pragma once
 #include <iostream>
-#include <vsomeip/payload.hpp>
+#include <vsomeip/vsomeip.hpp>
 
-class sensor_service
+class controller_service
 {
 private:
     /* data */
 public:
-    sensor_service(/* args */);
-    ~sensor_service();
+    controller_service(/* args */);
+    ~controller_service();
 };
 
-sensor_service::sensor_service(/* args */)
+controller_service::controller_service(/* args */)
 {
 }
 
-sensor_service::~sensor_service()
+controller_service::~controller_service()
 {
 }
