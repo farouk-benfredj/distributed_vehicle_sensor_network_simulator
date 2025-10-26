@@ -1,4 +1,5 @@
 #include <iostream>
+#include <dashbord_service.hpp>
 
 int main(int argc, char* argv[]) {
     std::cout << "dashbord_service started " << argc << " arguments.\n";
