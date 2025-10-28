@@ -3,6 +3,7 @@
 #include <random>
 #include <thread>
 #include <vsomeip/vsomeip.hpp>
+#include <vsomeip/handler.hpp>
 
 struct sensor_data {
     double speed;
@@ -29,7 +30,10 @@ public:
     sensor_service(/* args */);
     ~sensor_service();
 
-    void init();
+    bool init();
     void start();
     void stop();
+    void on_state_cbk(vsomeip::state_type_e _state);
+    void on_message_cbk(const std::shared_ptr<vsomeip::message>& _response);
+    void on_availability_cbk(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available);
 };
