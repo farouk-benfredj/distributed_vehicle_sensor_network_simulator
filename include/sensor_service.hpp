@@ -33,7 +33,7 @@ public:
     bool init();
     void start();
     void stop();
-    void on_state_cbk(vsomeip::state_type_e _state);
-    void on_message_cbk(const std::shared_ptr<vsomeip::message>& _response);
-    void on_availability_cbk(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available);
+    void on_state_cb(vsomeip::state_type_e _state);
+    void on_message_cb(const std::shared_ptr<vsomeip::message>& _response);
+    void on_availability_cb(vsomeip::service_t _service, vsomeip::instance_t _instance, bool _is_available);
 };
