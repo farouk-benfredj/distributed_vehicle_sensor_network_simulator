@@ -2,7 +2,11 @@
 #include <chrono>
 #include <sensor_service.hpp>
 
-sensor_service::sensor_service(/* args */){}
+sensor_service::sensor_service()
+{
+    rtm_ = vsomeip_v3::runtime::get();
+    app_ = rtm_->create_application();
+}
 
 sensor_service::~sensor_service(){}
 
@@ -62,9 +66,9 @@ void sensor_service::stop()
 int main(int argc, char* argv[]) {
     std::cout << "sensor_service started " << argc << " arguments.\n";
 
-    sensor_service sensor_cl;
-    if (sensor_cl.init()) {
-        sensor_cl.start();
+    sensor_service sensor_client;
+    if (sensor_client.init()) {
+        sensor_client.start();
         return EXIT_SUCCESS;
     } else {
         return EXIT_FAILURE;
