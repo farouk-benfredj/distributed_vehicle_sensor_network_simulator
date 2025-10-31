@@ -27,7 +27,7 @@ private:
     std::shared_ptr<vsomeip::runtime> rtm_;
 
 public:
-    sensor_service(/* args */);
+    sensor_service();
     ~sensor_service();
 
     bool init();

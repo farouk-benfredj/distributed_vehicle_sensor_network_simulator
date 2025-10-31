@@ -1,0 +1,23 @@
+{
+    "unicast": "127.0.0.1",
+    "applications": [
+        {
+            "name": "controller_service",
+            "id": "0x1234"
+        }
+    ],
+    "services": [
+        {
+            "service": "0x1111",
+            "instance": "0x1",
+            "unreliable": {
+                "port": "30509"
+            }
+        }
+    ],
+    "routing": "controller_service",
+    "logging": {
+        "level": "debug",
+        "console": "true"
+    }
+}

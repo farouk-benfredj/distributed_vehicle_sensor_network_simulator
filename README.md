@@ -32,3 +32,11 @@ dashboard_service → listens and displays system status.
                             | Displays all data |
                             | Logs / REST API   |
                             +-------------------+
+
+## Build
+```bash
+cd distributed_vehicle_sensor_network_simulator
+mkdir build && cd build
+cmake -B build .
+make -j$(nproc)
+```
