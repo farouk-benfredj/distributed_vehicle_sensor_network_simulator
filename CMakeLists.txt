@@ -16,19 +16,28 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR})
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 find_package(Boost REQUIRED COMPONENTS system thread)
-find_package(vsomeip3 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(vsomeip3 REQUIRED IMPORTED_TARGET vsomeip3)
+include_directories(${vsomeip3_INCLUDE_DIRS})
+link_directories(${vsomeip3_LIBRARY_DIRS})
 
 # sensor_service
 add_executable(sensor_service src/sensor_service.cc)
-target_link_libraries(sensor_service PRIVATE vsomeip3)
+target_link_libraries(sensor_service
+    PRIVATE
+        Boost::system
+        Boost::thread
+        ${vsomeip3_LIBRARIES}
+        pthread
+)
 
 # controller_service
 add_executable(controller_service src/controller_service.cc)
-target_link_libraries(controller_service PRIVATE vsomeip3)
+target_link_libraries(controller_service PRIVATE PkgConfig::vsomeip3)
 
 # dashboard_service
 add_executable(dashboard_service src/dashboard_service.cc)
-target_link_libraries(dashboard_service PRIVATE vsomeip3)
+target_link_libraries(dashboard_service PRIVATE PkgConfig::vsomeip3)

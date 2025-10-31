@@ -2,27 +2,18 @@ services:
   sensor:
     build: .
     container_name: sensor_service
-    # volumes:
-    #   - ./src/someip_config:/etc/vsomeip
-    # restart: unless-stopped
     networks:
       - vehicle_net
 
   controller:
     build: .
     container_name: controller_service
-    # volumes:
-    #   - ./src/someip_config:/etc/vsomeip
-    # restart: unless-stopped
     networks:
       - vehicle_net
 
   dashboard:
     build: .
     container_name: dashboard_service
-    # volumes:
-    #   - ./src/someip_config:/etc/vsomeip
-    # restart: unless-stopped
     networks:
       - vehicle_net
 
