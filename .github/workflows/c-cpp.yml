@@ -25,11 +25,9 @@ jobs:
           cmake \
           libboost-all-dev \
           libssl-dev \
-          curl
-
-        # Make /usr/bin/gcc and /usr/bin/g++ point to the installed 11 toolchain
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 || true
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100 || true
+          curl \
+          pkg-config \
+          libvsomeip3-dev || true
         gcc --version
         g++ --version
     - name: cmake
