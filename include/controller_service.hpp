@@ -5,7 +5,6 @@
 class controller_service
 {
 private:
-    /* data */
 public:
     controller_service();
     ~controller_service();

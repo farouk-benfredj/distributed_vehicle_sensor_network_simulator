@@ -5,7 +5,6 @@
 class dashbord_service
 {
 private:
-    /* data */
 public:
     dashbord_service();
     ~dashbord_service();
