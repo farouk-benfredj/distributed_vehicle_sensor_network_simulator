@@ -27,5 +27,8 @@ public:
     controller_service();
     ~controller_service();
 
+    bool init();
     void stop();
+    void on_message_cb(const std::shared_ptr<vsomeip::message>& _response);
+    void on_state_cb(vsomeip_v3::state_type_e _state);
 };
