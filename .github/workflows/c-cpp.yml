@@ -32,7 +32,7 @@ jobs:
         g++ --version
     - name: cmake
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBOOST_ROOT=/usr/include/boost -DBoost_NO_SYSTEM_PATHS=ON
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release .
         cmake --build build -- -j$(nproc)
     - name: make
       run: make -j$(nproc)
