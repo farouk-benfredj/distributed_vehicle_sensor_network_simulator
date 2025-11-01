@@ -1,0 +1,39 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: install_dependency
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          gcc-13 \
+          g++-13 \
+          cmake \
+          libboost-all-dev \
+          libssl-dev \
+          curl \
+          pkg-config \
+          libvsomeip3-dev \
+          ldconfig || true
+        gcc --version
+        g++ --version
+    - name: cmake
+      run: |
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release .
+        cmake --build build -- -j$(nproc)
+    - name: make
+      run: make -j$(nproc)
