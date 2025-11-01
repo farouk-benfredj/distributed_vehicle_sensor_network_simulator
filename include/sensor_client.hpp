@@ -12,6 +12,10 @@ struct sensor_data {
     double longitude;
 };
 
+static constexpr vsomeip_v3::service_t sc_service_id = 0x1234;
+static constexpr vsomeip_v3::instance_t sc_instance_id = 0x5678;
+static constexpr vsomeip_v3::method_t sc_method_id = 0x9ABC; //todo - unused
+
 /**
  * @brief Sensor Service class to publish mock data (speed, temperature, GPS). 
  *
@@ -19,10 +23,6 @@ struct sensor_data {
 class sensor_client
 {
 private:
-    static constexpr vsomeip_v3::service_t SENSOR_SERVICE_ID = 0x1234;
-    static constexpr vsomeip_v3::instance_t SENSOR_INSTANCE_ID = 0x5678;
-    static constexpr vsomeip_v3::method_t SENSOR_METHOD_ID = 0x9ABC;
-
     std::shared_ptr<vsomeip_v3::application> app_;
     std::shared_ptr<vsomeip_v3::runtime> rtm_;
 

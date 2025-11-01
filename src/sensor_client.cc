@@ -12,13 +12,13 @@ sensor_client::~sensor_client(){}
 
 void sensor_client::on_state_cb(vsomeip_v3::state_type_e _state) {
     if (_state == vsomeip_v3::state_type_e::ST_REGISTERED) {
-        app_->request_service(SENSOR_SERVICE_ID, SENSOR_INSTANCE_ID);
+        app_->request_service(sc_service_id, sc_instance_id);
     }
 }
 
 void sensor_client::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _response)
 {
-    if (SENSOR_SERVICE_ID == _response->get_service() && SENSOR_INSTANCE_ID == _response->get_instance()
+    if (sc_service_id == _response->get_service() && sc_instance_id == _response->get_instance()
             && vsomeip::message_type_e::MT_RESPONSE == _response->get_message_type()
             && vsomeip::return_code_e::E_OK == _response->get_return_code()) {
         // Get the payload and print it
@@ -33,14 +33,14 @@ void sensor_client::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_v
     bool _is_available)
 {
     // Check if the available service is the the controller_service
-    if (SENSOR_SERVICE_ID == _service && SENSOR_INSTANCE_ID == _instance && _is_available) {
+    if (sc_service_id == _service && sc_instance_id == _instance && _is_available) {
         // The service is available then we send the request
         // Create a new request
         std::shared_ptr<vsomeip::message> rq = rtm_->create_request();
         // Set the controller_service as target of the request
-        rq->set_service(SENSOR_SERVICE_ID);
-        rq->set_instance(SENSOR_INSTANCE_ID);
-        rq->set_method(SENSOR_SERVICE_ID);
+        rq->set_service(sc_service_id);
+        rq->set_instance(sc_instance_id);
+        rq->set_method(sc_service_id);
 
         // Create a payload which will be sent to the service
         std::shared_ptr<vsomeip::payload> pl = rtm_->create_payload();
@@ -68,11 +68,11 @@ bool sensor_client::init()
     app_->register_state_handler(std::bind(&sensor_client::on_state_cb, this, std::placeholders::_1));
 
     // register a callback for responses from the service
-    app_->register_message_handler(vsomeip_v3::ANY_SERVICE, SENSOR_INSTANCE_ID, vsomeip_v3::ANY_METHOD,
+    app_->register_message_handler(vsomeip_v3::ANY_SERVICE, sc_instance_id, vsomeip_v3::ANY_METHOD,
         std::bind(&sensor_client::on_message_cb, this, std::placeholders::_1));
 
     // register a callback which is called as soon as the service is available
-    app_->register_availability_handler(SENSOR_SERVICE_ID, SENSOR_INSTANCE_ID,
+    app_->register_availability_handler(sc_service_id, sc_instance_id,
         std::bind(&sensor_client::on_availability_cb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     return true;
 }
@@ -85,9 +85,9 @@ void sensor_client::start()
 void sensor_client::stop()
 {
     app_->unregister_state_handler();
-    app_->unregister_message_handler(vsomeip_v3::ANY_SERVICE, SENSOR_INSTANCE_ID, vsomeip_v3::ANY_METHOD);
+    app_->unregister_message_handler(vsomeip_v3::ANY_SERVICE, sc_instance_id, vsomeip_v3::ANY_METHOD);
     app_->clear_all_handler();
-    app_->release_service(SENSOR_SERVICE_ID, SENSOR_INSTANCE_ID);
+    app_->release_service(sc_service_id, sc_instance_id);
     app_->stop();
 }
 

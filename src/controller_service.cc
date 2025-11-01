@@ -1,8 +1,30 @@
-#include <iostream>
 #include <controller_service.hpp>
+
+controller_service::controller_service() : rtm_(vsomeip::runtime::get()), app_(rtm_->create_application()), stop_(false) {
+    stop_thread_ = std::thread{&controller_service::stop, this};
+}
+
+controller_service::~controller_service() {}
+
+void controller_service::stop() {
+    std::unique_lock<std::mutex> its_lock(mutex_);
+
+    while (!stop_) {
+        condition_.wait(its_lock);
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    // Stop offering the service
+    app_->stop_offer_service(service_id, service_instance_id);
+    // unregister the state handler
+    app_->unregister_state_handler();
+    // unregister the message handler
+    app_->unregister_message_handler(service_id, service_instance_id, service_method_id);
+    // shutdown the application
+    app_->stop();
+    }
 
 int main(int argc, char* argv[]) {
     std::cout << "controller_service started " << argc << " arguments.\n";
-
-    return 0;
+    return EXIT_SUCCESS;
 }
