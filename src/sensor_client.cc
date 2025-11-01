@@ -1,24 +1,22 @@
 #include <iostream>
 #include <chrono>
-#include <sensor_service.hpp>
+#include <sensor_client.hpp>
 
-sensor_service::sensor_service()
+sensor_client::sensor_client()
 {
     rtm_ = vsomeip_v3::runtime::get();
-    app_ = rtm_->create_application();
+    app_ = rtm_->create_application("sensor_client");
 }
 
-// sensor_service::sensor_service() : rtm_(vsomeip_v3::runtime::get()), app_(rtm_->create_application()) {}
+sensor_client::~sensor_client(){}
 
-sensor_service::~sensor_service(){}
-
-void sensor_service::on_state_cb(vsomeip_v3::state_type_e _state) {
+void sensor_client::on_state_cb(vsomeip_v3::state_type_e _state) {
     if (_state == vsomeip_v3::state_type_e::ST_REGISTERED) {
         app_->request_service(SENSOR_SERVICE_ID, SENSOR_INSTANCE_ID);
     }
 }
 
-void sensor_service::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _response)
+void sensor_client::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _response)
 {
     if (SENSOR_SERVICE_ID == _response->get_service() && SENSOR_INSTANCE_ID == _response->get_instance()
             && vsomeip::message_type_e::MT_RESPONSE == _response->get_message_type()
@@ -31,9 +29,10 @@ void sensor_service::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _
     }
 }
 
-void sensor_service::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_v3::instance_t _instance,
+void sensor_client::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_v3::instance_t _instance,
     bool _is_available)
 {
+    // Check if the available service is the the controller_service
     if (SENSOR_SERVICE_ID == _service && SENSOR_INSTANCE_ID == _instance && _is_available) {
         // The service is available then we send the request
         // Create a new request
@@ -45,7 +44,7 @@ void sensor_service::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_
 
         // Create a payload which will be sent to the service
         std::shared_ptr<vsomeip::payload> pl = rtm_->create_payload();
-        std::string str("Hello from sensor_service");
+        std::string str("Hello from sensor_client");
         std::vector<vsomeip::byte_t> pl_data(std::begin(str), std::end(str));
 
         pl->set_data(pl_data);
@@ -57,7 +56,7 @@ void sensor_service::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_
     }
 }
 
-bool sensor_service::init()
+bool sensor_client::init()
 {
     if(!app_->init())
     {
@@ -66,25 +65,24 @@ bool sensor_service::init()
     }
     // register a state handler to get called back after registration at the
     // runtime was successful
-    app_->register_state_handler(std::bind(&sensor_service::on_state_cb, this, std::placeholders::_1));
+    app_->register_state_handler(std::bind(&sensor_client::on_state_cb, this, std::placeholders::_1));
 
     // register a callback for responses from the service
     app_->register_message_handler(vsomeip_v3::ANY_SERVICE, SENSOR_INSTANCE_ID, vsomeip_v3::ANY_METHOD,
-        std::bind(&sensor_service::on_message_cb, this, std::placeholders::_1));
+        std::bind(&sensor_client::on_message_cb, this, std::placeholders::_1));
 
     // register a callback which is called as soon as the service is available
     app_->register_availability_handler(SENSOR_SERVICE_ID, SENSOR_INSTANCE_ID,
-        std::bind(&sensor_service::on_availability_cb, this, std::placeholders::_1,
-        std::placeholders::_2, std::placeholders::_3));
+        std::bind(&sensor_client::on_availability_cb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
     return true;
 }
 
-void sensor_service::start()
+void sensor_client::start()
 {
     app_->start();
 }
 
-void sensor_service::stop()
+void sensor_client::stop()
 {
     app_->unregister_state_handler();
     app_->unregister_message_handler(vsomeip_v3::ANY_SERVICE, SENSOR_INSTANCE_ID, vsomeip_v3::ANY_METHOD);
@@ -94,9 +92,9 @@ void sensor_service::stop()
 }
 
 int main(int argc, char* argv[]) {
-    std::cout << "sensor_service started " << argc << " arguments.\n";
+    std::cout << "sensor_client started " << argc << " arguments.\n";
 
-    sensor_service sensor_client;
+    sensor_client sensor_client;
     if (sensor_client.init()) {
         sensor_client.start();
         return EXIT_SUCCESS;

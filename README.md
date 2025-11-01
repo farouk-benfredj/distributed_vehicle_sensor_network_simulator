@@ -2,12 +2,12 @@
 Simulate a small in-vehicle network of ECUs communicating via SOME/IP inside Docker containers.
 
 ## Classes
-sensor_service → publishes mock data (speed, temperature, GPS).  
+sensor_client → publishes mock data (speed, temperature, GPS).  
 controller_service → subscribes, processes data, makes control decisions.  
 dashboard_service → listens and displays system status.
 
                             +-------------------+
-                            | sensor_service ECU |
+                            | sensor_client ECU |
                             |-------------------|
                             | Publishes data:   |
                             |   - Speed         |

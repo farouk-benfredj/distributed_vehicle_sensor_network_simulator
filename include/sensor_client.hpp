@@ -16,7 +16,7 @@ struct sensor_data {
  * @brief Sensor Service class to publish mock data (speed, temperature, GPS). 
  *
  */
-class sensor_service
+class sensor_client
 {
 private:
     static constexpr vsomeip_v3::service_t SENSOR_SERVICE_ID = 0x1234;
@@ -27,8 +27,8 @@ private:
     std::shared_ptr<vsomeip_v3::runtime> rtm_;
 
 public:
-    sensor_service();
-    ~sensor_service();
+    sensor_client();
+    ~sensor_client();
 
     bool init();
     void start();

@@ -24,9 +24,9 @@ pkg_check_modules(vsomeip3 REQUIRED IMPORTED_TARGET vsomeip3)
 include_directories(${vsomeip3_INCLUDE_DIRS})
 link_directories(${vsomeip3_LIBRARY_DIRS})
 
-# sensor_service
-add_executable(sensor_service src/sensor_service.cc)
-target_link_libraries(sensor_service
+# Sensor client
+add_executable(sensor_client src/sensor_client.cc)
+target_link_libraries(sensor_client
     PRIVATE
         Boost::system
         Boost::thread
@@ -34,10 +34,10 @@ target_link_libraries(sensor_service
         pthread
 )
 
-# controller_service
+# Controller service
 add_executable(controller_service src/controller_service.cc)
 target_link_libraries(controller_service PRIVATE PkgConfig::vsomeip3)
 
-# dashboard_service
+# Dashboard service
 add_executable(dashboard_service src/dashboard_service.cc)
 target_link_libraries(dashboard_service PRIVATE PkgConfig::vsomeip3)

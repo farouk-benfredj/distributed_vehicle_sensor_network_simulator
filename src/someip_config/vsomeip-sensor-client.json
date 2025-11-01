@@ -2,7 +2,7 @@
     "unicast": "127.0.0.1",
     "applications": [
         {
-            "name": "sensor_service",
+            "name": "sensor_client",
             "id": "0x1234"
         }
     ],
@@ -15,7 +15,7 @@
             }
         }
     ],
-    "routing": "sensor_service",
+    "routing": "sensor_client",
     "logging": {
         "level": "debug",
         "console": "true"
