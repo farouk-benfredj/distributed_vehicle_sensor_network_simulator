@@ -27,13 +27,20 @@ jobs:
           libssl-dev \
           curl \
           pkg-config \
-          libvsomeip3-dev \
           ldconfig || true
+        git clone --branch master --depth 1 https://github.com/COVESA/vsomeip.git /tmp/vsomeip && \
+          mkdir -p /tmp/vsomeip/build && cd /tmp/vsomeip/build && \
+          cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SIGNAL_HANDLING=1 .. && \
+          make -j$(nproc) && \
+          make install && \
+          ldconfig && \
+          iproute2 \
+          rm -rf /tmp/vsomeip
         gcc --version
         g++ --version
     - name: cmake
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release .
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DAPP_ENABLE_SIGNAL_HANDLING=1 .
         cmake --build build -- -j$(nproc)
     - name: make
       run: make -j$(nproc)
