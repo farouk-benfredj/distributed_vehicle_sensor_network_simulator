@@ -37,6 +37,6 @@ dashboard_service → listens and displays system status.
 ```bash
 cd distributed_vehicle_sensor_network_simulator
 mkdir build && cd build
-cmake -B build .
+cmake -B build . -DAPP_ENABLE_SIGNAL_HANDLING=1 .
 make -j$(nproc)
 ```

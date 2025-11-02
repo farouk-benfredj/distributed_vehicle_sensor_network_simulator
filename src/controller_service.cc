@@ -1,3 +1,7 @@
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+#include <csignal>
+#endif
+
 #include <controller_service.hpp>
 
 controller_service::controller_service() :
@@ -97,18 +101,36 @@ void controller_service::stop() {
     app_->stop();
 }
 
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+controller_service* cs_ptr(nullptr);
+void handle_signal(int _signal) {
+    if (cs_ptr != nullptr && (_signal == SIGINT || _signal == SIGTERM))
+        cs_ptr->terminate();
+}
+#endif
+
 int main(int argc, char* argv[]) {
     std::cout << "controller_service started " << argc << " arguments.\n";
 
     // explicitly mark these parameters as unused
     (void)argc;
     (void)argv;
-
+ 
     controller_service controller_service;
+
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+    cs_ptr = &controller_service;
+    handle_signal(SIGINT);
+    handle_signal(SIGTERM);
+#endif
+
     if(controller_service.init())
     {
         std::cerr << "Failed to init contoller_service" << std::endl;
         controller_service.start();
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+        controller_service.stop();
+#endif
         return EXIT_SUCCESS;
     } else {
         return EXIT_FAILURE;

@@ -33,11 +33,14 @@ target_link_libraries(sensor_client
         ${vsomeip3_LIBRARIES}
         pthread
 )
+target_compile_definitions(sensor_client PRIVATE APP_ENABLE_SIGNAL_HANDLING)
 
 # Controller service
 add_executable(controller_service src/controller_service.cc)
 target_link_libraries(controller_service PRIVATE PkgConfig::vsomeip3)
+target_compile_definitions(controller_service PRIVATE APP_ENABLE_SIGNAL_HANDLING)
 
 # Dashboard service
 add_executable(dashboard_service src/dashboard_service.cc)
 target_link_libraries(dashboard_service PRIVATE PkgConfig::vsomeip3)
+target_compile_definitions(dashboard_service PRIVATE APP_ENABLE_SIGNAL_HANDLING)
