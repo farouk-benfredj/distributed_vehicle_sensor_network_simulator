@@ -1,3 +1,7 @@
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+#include <csignal>
+#endif
+
 #include <iostream>
 #include <chrono>
 #include <sensor_client.hpp>
@@ -91,6 +95,14 @@ void sensor_client::stop()
     app_->stop();
 }
 
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+sensor_client* sc_ptr(nullptr);
+void handle_signal(int _signal) {
+    if(sc_ptr != nullptr && (_signal == SIGTERM) || (_signal == SIGINT))
+        sc_ptr->stop();
+}
+#endif
+
 int main(int argc, char* argv[]) {
     std::cout << "sensor_client started " << argc << " arguments.\n";
 
@@ -99,6 +111,13 @@ int main(int argc, char* argv[]) {
     (void)argv;
 
     sensor_client sensor_client;
+
+#ifdef APP_ENABLE_SIGNAL_HANDLING
+    sc_ptr = &sensor_client;
+    handle_signal(SIGINT);
+    handle_signal(SIGTERM);
+#endif
+
     if (sensor_client.init()) {
         sensor_client.start();
         return EXIT_SUCCESS;
