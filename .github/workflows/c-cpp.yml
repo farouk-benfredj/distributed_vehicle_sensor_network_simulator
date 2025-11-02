@@ -1,0 +1,58 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install CMake 3.28.3
+      uses: kitware/setup-cmake@v3
+      with:
+        cmake-version: '3.28.3'
+  
+    - name: install_dependency
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          gcc-13 \
+          g++-13 \
+          libboost-all-dev \
+          libboost-filesystem-dev \
+          libboost-system-dev \
+          libboost-thread-dev \
+          libssl-dev \
+          curl \
+          pkg-config \
+          ldconfig || true
+        git clone --branch master --depth 1 https://github.com/COVESA/vsomeip.git /tmp/vsomeip && \
+          mkdir -p /tmp/vsomeip/build && cd /tmp/vsomeip/build && \
+          cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_SIGNAL_HANDLING=1 .. && \
+          make -j$(nproc) && \
+          make install && \
+          ldconfig && \
+          iproute2 \
+          rm -rf /tmp/vsomeip
+        gcc --version
+        g++ --version
+  
+    - name: cmake configure
+      run: |
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DAPP_ENABLE_SIGNAL_HANDLING=1 .
+
+    - name: cmake make
+      run: |
+        cmake --build build -- -j$(nproc)
+  
+    - name: make
+      run: make -j$(nproc)

@@ -18,7 +18,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost 1.66 REQUIRED COMPONENTS system thread filesystem)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(vsomeip3 REQUIRED IMPORTED_TARGET vsomeip3)
 include_directories(${vsomeip3_INCLUDE_DIRS})
