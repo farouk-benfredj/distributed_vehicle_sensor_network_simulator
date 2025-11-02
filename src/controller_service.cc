@@ -1,19 +1,39 @@
 #include <controller_service.hpp>
 
-controller_service::controller_service() : rtm_(vsomeip::runtime::get()), app_(rtm_->create_application()), stop_(false) {
+controller_service::controller_service() : rtm_(vsomeip_v3::runtime::get()), app_(rtm_->create_application()), stop_(false) {
     stop_thread_ = std::thread{&controller_service::stop, this};
 }
 
 controller_service::~controller_service() {}
 
-void controller_service::on_message_cb(const std::shared_ptr<vsomeip::message>& _response)
-{
+void controller_service::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _request)
+{  
+    // Create a response based upon the request
+    std::shared_ptr<vsomeip_v3::message> resp = rtm_->create_response(_request);
 
+    // Construct string to send back
+    std::string str("Hello from controller_service");
+    str.append(reinterpret_cast<const char*>(_request->get_payload()->get_data()), 0, _request->get_payload()->get_length());
+
+    // Create a payload which will be sent back to the client
+    std::shared_ptr<vsomeip_v3::payload> resp_pl = rtm_->create_payload();
+    std::vector<vsomeip_v3::byte_t> pl_data(str.begin(), str.end());
+    resp_pl->set_data(pl_data);
+    resp->set_payload(resp_pl);
+
+    // Send the response back
+    app_->send(resp);
+    // we have finished
+    terminate();
 }
 
 void controller_service::on_state_cb(vsomeip_v3::state_type_e _state)
 {
-
+    if(_state == vsomeip_v3::state_type_e::ST_REGISTERED)
+    {
+        // we are registered at the runtime and can offer our service
+        app_->offer_service(service_id, service_instance_id);
+    }
 }
 
 bool controller_service::init() {
@@ -33,9 +53,22 @@ bool controller_service::init() {
     return true;
 }
 
+void controller_service::start()
+{
+    // start the application and wait for the on_event callback to be called
+    // this method only returns when app_->stop() is called (to-do check)
+    app_->start();
+}
+
+void controller_service::terminate()
+{
+    std::lock_guard<std::mutex> its_lock(mutex_);
+    stop_ = true;
+    condition_.notify_one();
+}
+
 void controller_service::stop() {
     std::unique_lock<std::mutex> its_lock(mutex_);
-
     while (!stop_) {
         condition_.wait(its_lock);
     }

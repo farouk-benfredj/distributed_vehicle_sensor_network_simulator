@@ -14,7 +14,7 @@ struct sensor_data {
 
 static constexpr vsomeip_v3::service_t sc_service_id = 0x1234;
 static constexpr vsomeip_v3::instance_t sc_instance_id = 0x5678;
-static constexpr vsomeip_v3::method_t sc_method_id = 0x9ABC; //todo - unused
+static constexpr vsomeip_v3::method_t sc_method_id = 0x9ABC; // to-do - unused
 
 /**
  * @brief Sensor Service class to publish mock data (speed, temperature, GPS). 
@@ -34,6 +34,6 @@ public:
     void start();
     void stop();
     void on_state_cb(vsomeip_v3::state_type_e _state);
-    void on_message_cb(const std::shared_ptr<vsomeip::message>& _response);
+    void on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _response);
     void on_availability_cb(vsomeip_v3::service_t _service, vsomeip_v3::instance_t _instance, bool _is_available);
 };

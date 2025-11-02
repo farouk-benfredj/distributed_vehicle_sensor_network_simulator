@@ -16,8 +16,8 @@ static constexpr vsomeip_v3::method_t service_method_id = 0x3333;
 class controller_service
 {
 private:
-    std::shared_ptr<vsomeip::runtime> rtm_;
-    std::shared_ptr<vsomeip::application> app_;
+    std::shared_ptr<vsomeip_v3::runtime> rtm_;
+    std::shared_ptr<vsomeip_v3::application> app_;
     bool stop_;
     std::mutex mutex_;
     std::thread stop_thread_;
@@ -28,7 +28,9 @@ public:
     ~controller_service();
 
     bool init();
+    void start();
     void stop();
-    void on_message_cb(const std::shared_ptr<vsomeip::message>& _response);
+    void terminate();
+    void on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _request);
     void on_state_cb(vsomeip_v3::state_type_e _state);
 };

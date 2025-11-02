@@ -19,10 +19,10 @@ void sensor_client::on_state_cb(vsomeip_v3::state_type_e _state) {
 void sensor_client::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _response)
 {
     if (sc_service_id == _response->get_service() && sc_instance_id == _response->get_instance()
-            && vsomeip::message_type_e::MT_RESPONSE == _response->get_message_type()
-            && vsomeip::return_code_e::E_OK == _response->get_return_code()) {
+            && vsomeip_v3::message_type_e::MT_RESPONSE == _response->get_message_type()
+            && vsomeip_v3::return_code_e::E_OK == _response->get_return_code()) {
         // Get the payload and print it
-        std::shared_ptr<vsomeip::payload> payload = _response->get_payload();
+        std::shared_ptr<vsomeip_v3::payload> payload = _response->get_payload();
         std::string resp = std::string(reinterpret_cast<const char*>(payload->get_data()), 0, payload->get_length());
         std::clog << "Received: " << resp << std::endl;
         stop();
@@ -36,16 +36,16 @@ void sensor_client::on_availability_cb(vsomeip_v3::service_t _service, vsomeip_v
     if (sc_service_id == _service && sc_instance_id == _instance && _is_available) {
         // The service is available then we send the request
         // Create a new request
-        std::shared_ptr<vsomeip::message> rq = rtm_->create_request();
+        std::shared_ptr<vsomeip_v3::message> rq = rtm_->create_request();
         // Set the controller_service as target of the request
         rq->set_service(sc_service_id);
         rq->set_instance(sc_instance_id);
         rq->set_method(sc_service_id);
 
         // Create a payload which will be sent to the service
-        std::shared_ptr<vsomeip::payload> pl = rtm_->create_payload();
+        std::shared_ptr<vsomeip_v3::payload> pl = rtm_->create_payload();
         std::string str("Hello from sensor_client");
-        std::vector<vsomeip::byte_t> pl_data(std::begin(str), std::end(str));
+        std::vector<vsomeip_v3::byte_t> pl_data(std::begin(str), std::end(str));
 
         pl->set_data(pl_data);
         rq->set_payload(pl);
