@@ -24,6 +24,7 @@ jobs:
           g++-13 \
           cmake \
           libboost-all-dev \
+          libboost-filesystem-dev \
           libssl-dev \
           curl \
           pkg-config \
