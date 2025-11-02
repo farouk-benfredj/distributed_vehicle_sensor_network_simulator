@@ -1,10 +1,23 @@
 #include <controller_service.hpp>
 
-controller_service::controller_service() : rtm_(vsomeip_v3::runtime::get()), app_(rtm_->create_application()), stop_(false) {
+controller_service::controller_service() :
+    rtm_(vsomeip_v3::runtime::get()),
+    app_(rtm_->create_application("controller_service")),
+    stop_(false)
+{
     stop_thread_ = std::thread{&controller_service::stop, this};
 }
 
-controller_service::~controller_service() {}
+controller_service::~controller_service()
+{
+    if (std::this_thread::get_id() != stop_thread_.get_id()) {
+        if (stop_thread_.joinable()) {
+            stop_thread_.join();
+        }
+    } else {
+        stop_thread_.detach();
+    }
+}
 
 void controller_service::on_message_cb(const std::shared_ptr<vsomeip_v3::message>& _request)
 {  
@@ -86,5 +99,18 @@ void controller_service::stop() {
 
 int main(int argc, char* argv[]) {
     std::cout << "controller_service started " << argc << " arguments.\n";
-    return EXIT_SUCCESS;
+
+    // explicitly mark these parameters as unused
+    (void)argc;
+    (void)argv;
+
+    controller_service controller_service;
+    if(controller_service.init())
+    {
+        std::cerr << "Failed to init contoller_service" << std::endl;
+        controller_service.start();
+        return EXIT_SUCCESS;
+    } else {
+        return EXIT_FAILURE;
+    }
 }

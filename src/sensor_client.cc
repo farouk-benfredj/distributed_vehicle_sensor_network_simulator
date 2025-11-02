@@ -94,6 +94,10 @@ void sensor_client::stop()
 int main(int argc, char* argv[]) {
     std::cout << "sensor_client started " << argc << " arguments.\n";
 
+     // explicitly mark these parameters as unused
+    (void)argc;
+    (void)argv;
+
     sensor_client sensor_client;
     if (sensor_client.init()) {
         sensor_client.start();
